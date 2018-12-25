@@ -8,6 +8,18 @@ spring:
 
   jpa:
     show-sql: true
+  jackson:
+    default-property-inclusion: non_null
 server:
   context-path: /sell
+
+
+wechat:
+  mpAppId: wxce7938b3fc2f0481
+  mpAppSecret: b18eb1d06c87cd9f32c53bec312a8820
+  mchId: xxx
+  mchKey: xxx
+  keyPath: xxx
+  notifyUrl: http://c17724517a2f4531.natapp.cc/pay/notify
+
 

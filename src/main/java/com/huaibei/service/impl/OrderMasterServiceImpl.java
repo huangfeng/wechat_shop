@@ -13,6 +13,7 @@ import com.huaibei.enmus.PayStatusEnum;
 import com.huaibei.enmus.ResultEnum;
 import com.huaibei.exception.SellException;
 import com.huaibei.service.OrderMasterService;
+import com.huaibei.service.PayService;
 import com.huaibei.service.ProductInfoService;
 import com.huaibei.utils.KeyUtil;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,6 +53,9 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 
     @Autowired
     private OrderMasterDao orderMasterDao;
+
+    @Autowired
+    private PayService payService;
 
     @Override
     @Transactional
@@ -83,8 +88,8 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 
         //3写入订单数据 orderMaster 和 orderDetail
         OrderMaster orderMaster = new OrderMaster();
+        orderMasterDTO.setOrderId(orderId);
         BeanUtils.copyProperties(orderMasterDTO,orderMaster);
-        orderMaster.setOrderId(orderId);
         orderMaster.setOrderAmount(orderAmount);
         orderMasterDao.save(orderMaster);
         //4扣库存
@@ -123,6 +128,13 @@ public class OrderMasterServiceImpl implements OrderMasterService{
     }
 
     @Override
+    public Page<OrderMasterDTO> findList(Pageable pageable) {
+        Page<OrderMaster> orderMasterDaoAll = orderMasterDao.findAll(pageable);
+        List<OrderMasterDTO> orderMasterDTOS = OrderMaster2OrderDTOConverter.convert(orderMasterDaoAll.getContent());
+        return new PageImpl<OrderMasterDTO>(orderMasterDTOS,pageable,orderMasterDaoAll.getTotalElements());
+    }
+
+    @Override
     @Transactional
     public OrderMasterDTO cancel(OrderMasterDTO orderMasterDTO) {
         OrderMaster orderMaster = new OrderMaster();
@@ -155,7 +167,7 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 
         //如果支付需要退款
         if(orderMasterDTO.getPayStatus().equals(PayStatusEnum.SUCCESS.getCode())){
-            //TODO
+            payService.refund(orderMasterDTO);
         }
 
         return orderMasterDTO;

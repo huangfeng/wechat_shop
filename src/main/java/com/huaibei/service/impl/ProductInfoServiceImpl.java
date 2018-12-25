@@ -7,6 +7,7 @@ import com.huaibei.enmus.ProductStatusEnmu;
 import com.huaibei.enmus.ResultEnum;
 import com.huaibei.exception.SellException;
 import com.huaibei.service.ProductInfoService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 public class ProductInfoServiceImpl implements ProductInfoService{
 
     @Autowired
@@ -72,5 +74,37 @@ public class ProductInfoServiceImpl implements ProductInfoService{
             one.setProductStock(result);
             productInfoDao.save(one);
         }
+    }
+
+    @Override
+    public ProductInfo offSell(String productId) {
+        ProductInfo one = productInfoDao.findOne(productId);
+        if(one == null){
+            log.error("[商品下架错误] 商品不存在 productId={}",productId);
+            throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+        }
+        if(one.getProductStatusEnmu() == ProductStatusEnmu.DOWN){
+            log.error("[商品下架错误] 商品已是下架状态 productId={}",productId);
+            throw new SellException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+        one.setProductStatus(ProductStatusEnmu.DOWN.getCode());
+        ProductInfo result = productInfoDao.save(one);
+        return result;
+    }
+
+    @Override
+    public ProductInfo onSell(String productId) {
+        ProductInfo one = productInfoDao.findOne(productId);
+        if(one == null){
+            log.error("[商品上架错误] 商品不存在 productId={}",productId);
+            throw new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+        }
+        if(one.getProductStatusEnmu() == ProductStatusEnmu.UP){
+            log.error("[商品上架错误] 商品已是上架状态 productId={}",productId);
+            throw new SellException(ResultEnum.ORDER_STATUS_ERROR);
+        }
+        one.setProductStatus(ProductStatusEnmu.UP.getCode());
+        ProductInfo result = productInfoDao.save(one);
+        return result;
     }
 }

@@ -1,12 +1,18 @@
 package com.huaibei.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.huaibei.beans.OrderDetail;
 import com.huaibei.enmus.OrderStatusEnum;
 import com.huaibei.enmus.PayStatusEnum;
+import com.huaibei.utils.EnumUtil;
+import com.huaibei.utils.serializer.Date2LongSerializer;
 import lombok.Data;
 
 import javax.persistence.Id;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,6 +23,8 @@ import java.util.List;
  * @Version: 1.0
  */
 @Data
+//@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+//@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OrderMasterDTO {
 
     private String orderId;
@@ -35,10 +43,22 @@ public class OrderMasterDTO {
 
     private Integer payStatus = PayStatusEnum.WAIT.getCode();
 
+    @JsonSerialize(using = Date2LongSerializer.class)
     private Date createTime;
 
+    @JsonSerialize(using = Date2LongSerializer.class)
     private Date updateTime;
+
 
     private List<OrderDetail> orderDetailList;
 
+    @JsonIgnore
+    public OrderStatusEnum getOrderStatusEnum(){
+        return EnumUtil.getByCode(orderStatus,OrderStatusEnum.class);
+    }
+
+    @JsonIgnore
+    public PayStatusEnum getPayStatusEnum(){
+        return  EnumUtil.getByCode(payStatus,PayStatusEnum.class);
+    }
 }

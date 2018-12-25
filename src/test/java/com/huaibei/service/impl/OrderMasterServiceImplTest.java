@@ -77,6 +77,13 @@ public class OrderMasterServiceImplTest {
     }
 
     @Test
+    public void list() throws Exception {
+        PageRequest request = new PageRequest(0,2);
+        Page<OrderMasterDTO> list = orderMasterService.findList(request);
+        Assert.assertNotEquals(0,list.getTotalElements());
+    }
+
+    @Test
     public void cancel() throws Exception {
         OrderMasterDTO one = orderMasterService.findOne(ORDER_ID);
         OrderMasterDTO cancel = orderMasterService.cancel(one);

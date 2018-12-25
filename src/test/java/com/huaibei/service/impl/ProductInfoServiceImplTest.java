@@ -54,4 +54,16 @@ public class ProductInfoServiceImplTest {
         productInfoService.save(productInfo);
     }
 
+    @Test
+    public void offSell(){
+        ProductInfo productInfo = productInfoService.offSell("10000");
+        Assert.assertEquals(ProductStatusEnmu.DOWN,productInfo.getProductStatusEnmu());
+    }
+
+    @Test
+    public void onSell(){
+        ProductInfo productInfo = productInfoService.onSell("10000");
+        Assert.assertEquals(ProductStatusEnmu.UP,productInfo.getProductStatusEnmu());
+    }
+
 }

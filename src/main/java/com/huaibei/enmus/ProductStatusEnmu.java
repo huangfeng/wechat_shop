@@ -3,7 +3,7 @@ package com.huaibei.enmus;
 import lombok.Getter;
 
 @Getter
-public enum ProductStatusEnmu {
+public enum ProductStatusEnmu implements CodeEnum{
     UP(0,"在架"),
     DOWN(1,"下架")
     ;

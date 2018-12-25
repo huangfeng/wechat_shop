@@ -31,4 +31,7 @@ public interface OrderMasterService {
     //支付订单
     OrderMasterDTO paid(OrderMasterDTO orderMasterDTO);
 
+    //查询分页订单列表
+    Page<OrderMasterDTO> findList(Pageable pageable);
+
 }
