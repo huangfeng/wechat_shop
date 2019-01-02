@@ -11,6 +11,8 @@ import com.sun.org.apache.xpath.internal.operations.Mod;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
@@ -104,6 +106,8 @@ public class SellerProductController {
      * @return
      */
     @PostMapping("/save")
+//    @CachePut()
+//    @CacheEvict(cacheNames = "product",key = "100")
     public ModelAndView save(@Valid ProductForm productForm, BindingResult bindingResult,Map<String,Object> map){
         if(bindingResult.hasErrors()){
             map.put("msg",bindingResult.getFieldError().getDefaultMessage());

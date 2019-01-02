@@ -1,0 +1,43 @@
+spring:
+  datasource:
+    username: root
+    password: 111
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/huaibei?characterEncoding=utf-8&useSSL=false
+#    url: jdbc:mysql://67.216.193.93:3306/huaibei?characterEncoding=utf-8&useSSL=false
+  jpa:
+    show-sql: true
+  jackson:
+    default-property-inclusion: non_null
+  redis:
+    host: 192.168.10.160
+server:
+  context-path: /sell
+
+
+wechat:
+  mpAppId: wxce7938b3fc2f0481
+  mpAppSecret: b18eb1d06c87cd9f32c53bec312a8820
+  openAppId: xxx
+  openAppSecret:
+  mchId: xxx
+  mchKey: xxx
+  keyPath: xxx
+  notifyUrl: http://c17724517a2f4531.natapp.cc/pay/notify
+  templateId:
+    orderStatus: xxx
+#    orderStatus: xxx
+
+
+projectUrl:
+  wechatMpAuthorize: http://rhyme.nat300.top
+  wechatOpenAuthorize: http://rhyme.nat300.top
+  sell: http://rhyme.nat300.top
+logging:
+  level:
+    com.huaibei.beans.mapper: trace
+
+mybatis:
+  mapper-locations: mapper/*.xml
+
+

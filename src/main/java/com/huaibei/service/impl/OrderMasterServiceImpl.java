@@ -11,10 +11,9 @@ import com.huaibei.dto.OrderMasterDTO;
 import com.huaibei.enmus.OrderStatusEnum;
 import com.huaibei.enmus.PayStatusEnum;
 import com.huaibei.enmus.ResultEnum;
+import com.huaibei.exception.ResponseBankException;
 import com.huaibei.exception.SellException;
-import com.huaibei.service.OrderMasterService;
-import com.huaibei.service.PayService;
-import com.huaibei.service.ProductInfoService;
+import com.huaibei.service.*;
 import com.huaibei.utils.KeyUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.criterion.Order;
@@ -57,6 +56,11 @@ public class OrderMasterServiceImpl implements OrderMasterService{
     @Autowired
     private PayService payService;
 
+    @Autowired
+    private PushMessageService pushMessageService;
+
+    @Autowired
+    private WebSocket webSocket;
     @Override
     @Transactional
     public OrderMasterDTO create(OrderMasterDTO orderMasterDTO) {
@@ -69,6 +73,7 @@ public class OrderMasterServiceImpl implements OrderMasterService{
             ProductInfo one = productInfoService.findOne(orderDetail.getProductId());
             if(one == null){
                 throw  new SellException(ResultEnum.PRODUCT_NOT_EXIST);
+//                    throw new ResponseBankException();
             }
             //2计算订单总价
             orderAmount = one.getProductPrice()
@@ -99,6 +104,8 @@ public class OrderMasterServiceImpl implements OrderMasterService{
 
         productInfoService.decreaseStock(cartDTOList);
 
+        //发送websocket消息
+        webSocket.sendMessage("有新的订单:" + orderMaster.getOrderId());
 
         return orderMasterDTO;
     }
@@ -189,6 +196,9 @@ public class OrderMasterServiceImpl implements OrderMasterService{
             log.error("[完结订单] 更新失败 orderId={}, orderStatus={}",orderMasterDTO.getOrderId(),orderMasterDTO.getOrderStatus());
             throw new SellException(ResultEnum.ORDER_UPDATE_FAIL);
         }
+
+        //推送模板消息
+        pushMessageService.orderStatus(orderMasterDTO);
         return orderMasterDTO;
     }
 

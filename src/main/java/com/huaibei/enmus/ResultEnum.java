@@ -40,6 +40,10 @@ public enum  ResultEnum {
     WXPAY_NOTIFY_MONEY_VERIFY_ERROR(-13,"微信支付金额与异步通知金额不一致"),
 
     ORDER_CANCEL_SUCCESS(-14,"订单取消成功"),
+
+    LOGIN_FAIL(-15,"登录失败,登录信息不正确"),
+
+    LOGOUT_SUCCESS(-16,"登出成功"),
     ;
 
     private Integer code;

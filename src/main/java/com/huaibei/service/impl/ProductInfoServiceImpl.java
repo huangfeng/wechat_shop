@@ -9,6 +9,9 @@ import com.huaibei.exception.SellException;
 import com.huaibei.service.ProductInfoService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,14 @@ import java.util.List;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = "product")
 public class ProductInfoServiceImpl implements ProductInfoService{
 
     @Autowired
     private ProductInfoDao productInfoDao;
     @Override
+//    @Cacheable(cacheNames = "product",key = "100")
+    @Cacheable(key = "100")
     public ProductInfo findOne(String productId) {
         return productInfoDao.findOne(productId);
     }
@@ -39,6 +45,7 @@ public class ProductInfoServiceImpl implements ProductInfoService{
     }
 
     @Override
+    @CachePut(key = "100")
     public ProductInfo save(ProductInfo productInfo) {
         return productInfoDao.save(productInfo);
     }
